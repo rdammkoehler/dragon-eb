@@ -10,6 +10,9 @@ class DragonBusClient:
         self.rmq_client = RabbitCommandClient()
         self.rmq_client.recv(callback=self.store_received_message)
 
+    def callback(self, callback):
+        self.callback = callback
+
     def start(self):
         self.rmq_client.start()
 
@@ -17,5 +20,7 @@ class DragonBusClient:
         self.rmq_client.send(json_string)
 
     def store_received_message(self, ch, method, properties, message):
-        id = self.mongo_client.dragon.events.insert_one(json.loads(message.decode('utf-8'))).inserted_id
-        print("stored %r" % self.mongo_client.dragon.events.find_one({"_id": id}))
+        json_message = json.loads(message.decode('utf-8'))
+        self.mongo_client.dragon.events.insert_one(json_message).inserted_id
+        print("stored %s" % json_message)
+        self.callback(ch, method, properties, message)
