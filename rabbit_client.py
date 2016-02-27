@@ -4,8 +4,6 @@ import time
 class RabbitClient:
 
     def __init__(self):
-        #cred = pika.PlainCredentials('guest','guest')
-        #time.sleep(0.01)
         self.conn = pika.BlockingConnection(pika.ConnectionParameters('10.0.1.233'))
         self.chan = self.conn.channel()
 
