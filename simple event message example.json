@@ -1,0 +1,19 @@
+{
+	"header": {
+		"event_id": 1,
+		"time": "2016-02-26T16:56:00-05:00",
+		"host": {
+			"name": "thought.local",
+			"IPv4": "127.0.0.1"
+		},
+		"process": {
+			"name": "ping",
+			"pid": 1234,
+			"cwd": "/Users/rich/projects/HISC/spikes/simpleevent"
+		},
+		"schema": null,
+		"encoding": "utf-8",
+		"publickey": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com"
+	},
+	"body": "ping!"
+}
