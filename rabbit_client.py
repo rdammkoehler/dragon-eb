@@ -4,7 +4,7 @@ import time
 class RabbitClient:
 
     def __init__(self):
-        self.conn = pika.BlockingConnection(pika.ConnectionParameters('10.0.1.233'))
+        self.conn = pika.BlockingConnection(pika.ConnectionParameters('trainmaker.local'))
         self.chan = self.conn.channel()
 
 class RabbitCommandClient(RabbitClient):
