@@ -44,9 +44,9 @@ class DragonBusClient:
         return False
 
     def persist_messages(self):
-        self.callback(persist_message)
+        self.add_callback(self.persist_message)
 
     def persist_message(self, ch, method, properties, message):
-        json_message = json.loads(message.decode('utf-8'))
-        if not self.ignored(json_message):
+        if not self.ignored(message):
+            json_message = json.loads(message.decode('utf-8'))
             self.mongo_client.dragon.events.insert_one(json_message).inserted_id

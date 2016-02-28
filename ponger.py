@@ -7,6 +7,7 @@ class Ponger(DragonBusClient):
 
     def __init__(self):
         DragonBusClient.__init__(self)
+        self.ignores('event_id', 2)
         self.add_callback(self.send_pong)
 
     def send_pong(self, ch, method, properties, message):
