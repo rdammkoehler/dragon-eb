@@ -28,11 +28,11 @@ class DragonBusClient:
 
     def store_received_message(self, ch, method, properties, message):
         json_message = json.loads(message.decode('utf-8'))
-        if not self.__ignored(json_message):
+        if not self.ignored(json_message):
             self.mongo_client.dragon.events.insert_one(json_message).inserted_id
-        self.callback(ch, method, properties, message)
+        self.callback(ch, method, properties, json_message)
 
-    def __ignored(self, json_message):
+    def ignored(self, json_message):
         for header, values in self.ignore.items():
             if header in json_message['header']:
                 for value in values:

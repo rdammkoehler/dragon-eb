@@ -1,4 +1,4 @@
-from dragon_esb import DragonBusClient
+from dragon_eb import DragonBusClient
 from simple_event import Ping
 
 class Pinger(DragonBusClient):
