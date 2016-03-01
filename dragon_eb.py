@@ -10,7 +10,7 @@ class DragonBusClient:
         self.rmq_client = RabbitCommandClient()
         self.rmq_client.recv(callback=self.on_message)
         self.callbacks = []
-        self.listens_for = { '*': '*' }
+        self.listens_for = {}
         self.ignore = {}
         if persist_messages:
             self.persist_messages()
@@ -43,26 +43,23 @@ class DragonBusClient:
                 callback(ch, method, properties, json_message)
 
     def accepted(self, json_message):
+        return self.__contains(self.listens_for, json_message)
+
+    def ignored(self, json_message):
+        return self.__contains(self.ignore, json_message)
+
+    def __contains(self, kvp, json_message):
         rval = False
         if type(json_message) is dict:
-            for key, values in self.listens_for.items():
+            for key, values in kvp.items():
                 if key in json_message:
                     for value in values:
                         if json_message[key] == value:
                             rval = True
                 else:
                     for json_key in json_message:
-                        rval = rval or self.accepted(json_message[json_key])
-        return rval
-
-    def ignored(self, json_message):
-        for header, values in self.ignore.items():
-            if header in json_message['header']:
-                for value in values:
-                    if json_message['header'][header] == value:
-                        return True
-        return False
-        
+                        rval = rval or self.__contains(kvp, json_message[json_key])
+        return rval        
 
     def persist_messages(self):
         self.add_callback(self.__persist_message)
