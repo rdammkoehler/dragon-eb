@@ -9,6 +9,7 @@ class Ponger(DragonBusClient):
         DragonBusClient.__init__(self)
         self.ignores('event_id', 2)
         self.add_callback(self.send_pong)
+        self.persist_messages()
 
     def send_pong(self, ch, method, properties, message):
         json_message = json.loads(message.decode('utf-8'))
