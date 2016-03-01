@@ -4,15 +4,14 @@ import time
 class RabbitClient:
 
     def __init__(self):
-        #self.conn = pika.BlockingConnection(pika.ConnectionParameters('trainmaker.local'))
-        self.conn = pika.BlockingConnection()
+        self.conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.chan = self.conn.channel()
 
 class RabbitCommandClient(RabbitClient):
 
     def __init__(self, exchange='dragon', queue='command', routing_key='dragon.command'):
         RabbitClient.__init__(self)
-        self.chan.exchange_declare(exchange=exchange, exchange_type='topic')
+        self.chan.exchange_declare(exchange=exchange, type='fanout')
         self.chan.queue_declare(queue=queue)
         self.chan.queue_bind(exchange=exchange, queue=queue, routing_key=routing_key)
 
@@ -32,6 +31,7 @@ class RabbitCommandClient(RabbitClient):
     def __del__(self):
         self.conn.close()
 
+#  I don't remember what this was for, I think its all about the routing_key
 class RabbitCronClient(RabbitCommandClient):
 
     def __init__(self, exchange='dragon', queue='cron', routing_key='dragon.cron'):
