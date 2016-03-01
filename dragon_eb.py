@@ -1,19 +1,15 @@
 import json
 
-from pymongo import MongoClient
 from rabbit_client import RabbitCommandClient
 
 class DragonBusClient:
 
-    def __init__(self, persist_messages=False):
-        self.mongo_client = MongoClient()
+    def __init__(self):
         self.rmq_client = RabbitCommandClient()
         self.rmq_client.recv(callback=self.on_message)
         self.callbacks = []
         self.listens_for = {}
         self.ignore = {}
-        if persist_messages:
-            self.persist_messages()
 
     def add_callback(self, callback):
         self.callbacks.append(callback)
@@ -60,10 +56,3 @@ class DragonBusClient:
                     for json_key in json_message:
                         rval = rval or self.__contains(kvp, json_message[json_key])
         return rval        
-
-    def persist_messages(self):
-        self.add_callback(self.__persist_message)
-
-    def __persist_message(self, ch, method, properties, json_message):
-        if not self.ignored(json_message):
-            self.mongo_client.dragon.events.insert_one(json_message).inserted_id
