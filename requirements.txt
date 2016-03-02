@@ -1,2 +1,2 @@
-pika (0.10.0)
-pymongo (3.2.1)
+pika==0.10.0
+pymongo==3.2.1
