@@ -9,7 +9,7 @@ class DragonBusClient:
 
     def __init__(self, message_filter=Filter()):
         self.message_filter = message_filter
-        self.rmq_client = RabbitCommandClient()
+        self.rmq_client = RabbitCommandClient()  # TODO, insulate us from Rabbit
         self.rmq_client.recv(callback=self.on_message)
         self.callbacks = []
 
