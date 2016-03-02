@@ -1,9 +1,8 @@
-# DRAGON ESB
+# DRAGON EB
 
-Not really an ESB so much as an event client/server pair example for a spike
+An Event Bus SPIKE. Note, this is not the final product, its just a collection of experiements. IRL I would TDD the hell out of this.
 
 # How to Run
-
 
 Start the server side
 
