@@ -9,7 +9,10 @@ class RabbitClient:
 
 class RabbitCommandClient(RabbitClient):
 
-    def __init__(self, exchange='dragon', routing_key='dragon.command'):
+    EXCHANGE='dragon'
+    ROUTING_KEY = 'dragon.command'
+
+    def __init__(self, exchange=EXCHANGE, routing_key=ROUTING_KEY):
         RabbitClient.__init__(self)
         self.chan.exchange_declare(exchange=exchange, type='fanout')
 
@@ -17,7 +20,7 @@ class RabbitCommandClient(RabbitClient):
         self.queue_name = result.method.queue
         self.chan.queue_bind(exchange=exchange, queue=self.queue_name)
 
-    def send(self, json_string, exchange='dragon', routing_key='dragon.command'):
+    def send(self, json_string, exchange=EXCHANGE, routing_key=ROUTING_KEY):
         self.chan.basic_publish(exchange=exchange, routing_key=routing_key, body=json_string)
 
     def recv(self, callback, no_ack=True):
@@ -28,9 +31,13 @@ class RabbitCommandClient(RabbitClient):
         try:
             self.chan.start_consuming()
         except KeyboardInterrupt:
-            self.chan.stop_consuming()
+            self.stop()
+
+    def stop(self):
+        self.chan.stop_consuming()
 
     def __del__(self):
+        self.stop()
         self.conn.close()
 
 def callback(ch, method, properties, body):

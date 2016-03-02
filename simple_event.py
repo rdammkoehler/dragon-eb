@@ -32,6 +32,11 @@ class SimpleEvent:
     def to_json(self):
         return json.JSONEncoder().encode({ 'header': self.header, 'body': self.body })
 
+class Start(SimpleEvent):
+
+  def __init__(self):
+    SimpleEvent.__init__(self, 0, { 'start' : 'start'})
+    
 class Ping(SimpleEvent):
 
     def __init__(self):
@@ -47,3 +52,13 @@ class Tick(SimpleEvent):
 
     def __init__(self, date_time):
         SimpleEvent.__init__(self, 3, { 'tick': date_time.isoformat() })
+
+class Notification(SimpleEvent):
+
+  def __init__(self, notification):
+    SimpleEvent.__init__(self, 1000, notification)
+
+class Acknowledgement(SimpleEvent):
+
+  def __init__(self, ack):
+    SimpleEvent.__init__(self, 9999, ack)

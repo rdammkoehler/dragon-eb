@@ -11,8 +11,7 @@ class Ponger(DragonBusClient):
         self.add_callback(self.send_pong)
 
     def send_pong(self, ch, method, properties, json_message):
-        self.rmq_client.send(Pong().to_json())
-        print("{{{Pong}}}")
+        self.send(Pong().to_json())
 
 if __name__ == "__main__":
     Ponger().start()

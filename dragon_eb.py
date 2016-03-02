@@ -19,6 +19,9 @@ class DragonBusClient:
     def start(self):
         self.rmq_client.start()
 
+    def stop(self):
+        self.rmq_client.stop()
+
     def send(self, json_string):
         self.rmq_client.send(json_string)
 
@@ -28,9 +31,12 @@ class DragonBusClient:
             if self.message_filter.accept(json_message):
                 for callback in self.callbacks:
                     callback(ch, method, properties, json_message)
+            #  else:
+                #  print("(%d) rejecting %s" % (os.getpid(), message))
 
     def __json_of(self, message):
         try:
+            #  print("(%d) converting %s " % (os.getpid(), message))
             return json.loads(message.decode('utf-8'))
         except json.decoder.JSONDecodeError:
-            print("discarding non-json message")
+            print("(%d) discarding non-json message" % os.getpid())

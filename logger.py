@@ -13,7 +13,6 @@ class Logger(DragonBusClient):
         self.add_callback(self.__persist_message)
 
     def __persist_message(self, ch, method, properties, json_message):
-        print("logging: %s" % json_message)
         self.mongo_client.dragon.events.insert_one(json_message)
 
 if __name__ == "__main__":
