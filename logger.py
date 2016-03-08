@@ -16,4 +16,4 @@ class Logger(DragonBusClient):
         self.mongo_client.dragon.events.insert_one(json_message)
 
 if __name__ == "__main__":
-    Logger().start()
+    Logger().start().join()

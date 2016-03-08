@@ -1,5 +1,4 @@
 import datetime
-import threading
 import time
 
 from dragon_eb import DragonBusClient
@@ -29,19 +28,16 @@ class Registrar(DragonBusClient):
         return self.registered_events
 
 if __name__ == "__main__":
-    reg = Registrar()
-    reg_thread = threading.Thread(target=reg.start)
-    reg_thread.setDaemon(True)
-    reg_thread.start()
+    reg = Registrar().start()
 
-    rcc = RabbitCommandClient()
-    rcc.send(Start().to_json())
-    rcc.send(Ping().to_json())
-    rcc.send(Pong().to_json())
-    rcc.send(Tick(datetime.datetime.now()).to_json())
-    rcc.send(Notification({ 'message': 'hi mom'}).to_json())
-    rcc.send(Acknowledgement({ 'ack': 'hi rich'}).to_json())
-    rcc.send(ResourceReady('http://google.com').to_json())
+    rcc = RabbitCommandClient(exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Start().to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Ping().to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Pong().to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Tick(datetime.datetime.now()).to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Notification({ 'message': 'hi mom'}).to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Acknowledgement({ 'ack': 'hi rich'}).to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=ResourceReady('http://google.com').to_json(), exchange='dragon', routing_key='dragon.command')
 
     time.sleep(1)
     print(reg.dump())

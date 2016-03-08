@@ -16,7 +16,7 @@ class Deadpool(DragonBusClient):
 
     def __persist_message(self, ch, method, properties, json_message):
         if self.__dead(json_message):
-            self.mongo_client.dragon.events.insert_one(json_message)
+            self.mongo_client.dragon.deadpool.insert_one(json_message)
 
     def __dead(self, json_message):
         level = json_message['header']['level']
@@ -24,4 +24,4 @@ class Deadpool(DragonBusClient):
 
 
 if __name__ == "__main__":
-    Deadpool().start()
+    Deadpool().start().join()

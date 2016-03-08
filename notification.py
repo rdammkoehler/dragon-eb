@@ -1,4 +1,3 @@
-import threading
 import time
 
 from dragon_eb import DragonBusClient
@@ -13,9 +12,7 @@ class Notifier(DragonBusClient):
         if check_acknowledgement:
             DragonBusClient.__init__(self, EventIdFilter(9999))
             self.add_callback(self.__recv_ack)
-            ack_ack_thread = threading.Thread(target=self.start)
-            ack_ack_thread.setDaemon(True)
-            ack_ack_thread.start()
+            self.start()
         else:
             DragonBusClient.__init__(self)
 
@@ -40,11 +37,7 @@ class Notifier(DragonBusClient):
 class Acknowledger(DragonBusClient):
 
     def ack():
-        acker = Acknowledger()
-        ack_thread = threading.Thread(target=acker.start)
-        ack_thread.setDaemon(True)
-        ack_thread.start()
-        return acker    
+        return Acknowledger().start()
 
     def __init__(self):
         DragonBusClient.__init__(self, EventIdFilter(1000))

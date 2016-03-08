@@ -21,4 +21,4 @@ class ResourceCat:
             print(resource.read())
 
 if __name__ == "__main__":
-    ResourceRetriever(ResourceCat().cat).start()
+    ResourceRetriever(ResourceCat().cat).start().join()

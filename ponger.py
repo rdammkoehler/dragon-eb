@@ -14,4 +14,4 @@ class Ponger(DragonBusClient):
         self.send(Pong().to_json())
 
 if __name__ == "__main__":
-    Ponger().start()
+    Ponger().start().join()

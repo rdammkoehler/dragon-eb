@@ -1,4 +1,5 @@
 import pika
+import threading
 import time
 
 class RabbitClient:
@@ -9,10 +10,7 @@ class RabbitClient:
 
 class RabbitCommandClient(RabbitClient):
 
-    EXCHANGE='dragon'
-    ROUTING_KEY = 'dragon.command'
-
-    def __init__(self, exchange=EXCHANGE, routing_key=ROUTING_KEY):
+    def __init__(self, exchange, routing_key):
         RabbitClient.__init__(self)
         self.chan.exchange_declare(exchange=exchange, type='fanout')
 
@@ -20,7 +18,7 @@ class RabbitCommandClient(RabbitClient):
         self.queue_name = result.method.queue
         self.chan.queue_bind(exchange=exchange, queue=self.queue_name)
 
-    def send(self, json_string, exchange=EXCHANGE, routing_key=ROUTING_KEY):
+    def send(self, json_string, exchange, routing_key):
         try:
             self.chan.basic_publish(exchange=exchange, routing_key=routing_key, body=json_string)
         except pika.exceptions.ChannelClosed:
@@ -31,6 +29,12 @@ class RabbitCommandClient(RabbitClient):
         return self
 
     def start(self):
+        reg_thread = threading.Thread(target=self.__start)
+        reg_thread.setDaemon(True)
+        reg_thread.start()
+        return reg_thread
+
+    def __start(self):
         try:
             self.chan.start_consuming()
         except KeyboardInterrupt:
@@ -47,5 +51,6 @@ def callback(ch, method, properties, body):
     print(" [x] received %r" % body)
 
 if __name__ == "__main__":
-    RabbitCommandClient().send('{ "hello": "I am Groot!" }')
-    RabbitCommandClient().recv(callback).start()
+    RabbitCommandClient(exchange='test', routing_key='test.routing_key').recv(callback).start()
+    RabbitCommandClient(exchange='test', routing_key='test.routing_key').send(json_string='{ "hello": "I am Groot!" }', exchange='test', routing_key='test.routing_key')
+    
