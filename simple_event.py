@@ -35,6 +35,7 @@ class SimpleEvent:
     def to_json(self):
         return json.JSONEncoder().encode({ 'header': self.header, 'body': self.body })
 
+### Event Coordination
 class Start(SimpleEvent):
 
   def __init__(self):
@@ -56,6 +57,8 @@ class Tick(SimpleEvent):
     def __init__(self, date_time):
         SimpleEvent.__init__(self, event_id=3, body={ 'tick': date_time.isoformat() })
 
+
+### Events
 class Notification(SimpleEvent):
 
   def __init__(self, notification):
@@ -81,10 +84,16 @@ class LogMessage(SimpleEvent):
 class ResourceReady(SimpleEvent):
 
   def __init__(self, resource_url):
-    SimpleEvent.__init__(self, event_id= 2000,
+    SimpleEvent.__init__(self, event_id=2000,
                                body={ 'resource_url': resource_url }
       )
 
+class Trigger(SimpleEvent):
+
+  def __init__(self, event_chain_id):  # a whole other realm of ids to maintain
+    SimpleEvent.__init__(self, event_id=5000, body={ 'event_chain_id': event_chain_id })
+
+#### Bus Administration
 class NewEvent(SimpleEvent):
 
   def __init__(self, event_id):
