@@ -84,3 +84,9 @@ class ResourceReady(SimpleEvent):
     SimpleEvent.__init__(self, event_id= 2000,
                                body={ 'resource_url': resource_url }
       )
+
+class NewEvent(SimpleEvent):
+
+  def __init__(self, event_id):
+    SimpleEvent.__init__(self, event_id=10000, body={ 'event_id': event_id })
+
