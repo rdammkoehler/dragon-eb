@@ -21,7 +21,10 @@ class RabbitCommandClient(RabbitClient):
         self.chan.queue_bind(exchange=exchange, queue=self.queue_name)
 
     def send(self, json_string, exchange=EXCHANGE, routing_key=ROUTING_KEY):
-        self.chan.basic_publish(exchange=exchange, routing_key=routing_key, body=json_string)
+        try:
+            self.chan.basic_publish(exchange=exchange, routing_key=routing_key, body=json_string)
+        except pika.exceptions.ChannelClosed:
+            print('ChannelClosed: dropped %s' % json_string)
 
     def recv(self, callback, no_ack=True):
         self.chan.basic_consume(callback, queue=self.queue_name, no_ack=no_ack)

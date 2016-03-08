@@ -4,7 +4,6 @@ import os
 from filter import Filter
 from rabbit_client import RabbitCommandClient
 
-
 class DragonBusClient:
 
     def __init__(self, message_filter=Filter()):
@@ -31,12 +30,9 @@ class DragonBusClient:
             if self.message_filter.accept(json_message):
                 for callback in self.callbacks:
                     callback(ch, method, properties, json_message)
-            #  else:
-                #  print("(%d) rejecting %s" % (os.getpid(), message))
 
     def __json_of(self, message):
         try:
-            #  print("(%d) converting %s " % (os.getpid(), message))
             return json.loads(message.decode('utf-8'))
         except json.decoder.JSONDecodeError:
             print("(%d) discarding non-json message" % os.getpid())

@@ -12,5 +12,4 @@ class FilterChain(Filter):
         self.filters = list(args)
 
     def accept(self, json_message):
-        # print("appying %d filters" % len(self.filters))
         return all([function.accept(json_message) for function in self.filters])
