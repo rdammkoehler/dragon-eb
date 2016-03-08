@@ -220,27 +220,167 @@ What's Missing?
 
 Nothing.
 
-# Ping-Pong Example (RabbitMQ) [out of date]
+# Ping-Pong Example (RabbitMQ, MongoDB)
 
 Start the server side
 
+	python logger.py &
 	python ponger.py &
 
 Start the client side
 
 	python pinger.py
 
-Go look in the db! Ponger should have written a json message into a database named dragon and a collection named events. The message should look a little like the contents of 'simple event message example.json'. Some real ones from my db look like this;
+Go look in the db! 
+
+[http://localhost:28017/dragon/sys/](http://localhost:28017/dragon/sys/)
+
+Ponger should have written a json message into a database named dragon and a collection named sys. The message should look a little like the contents of 'simple event message example.json'. Some real ones from my db look like this;
 
 ```json
-{ "_id" : ObjectId("56d10716073dcb6e71806d8b"), "header" : { "event_id" : 1, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" }, "process" : { "pid" : 28277, "name" : "MainProcess", "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "schema" : null, "encoding" : "utf-8", "time" : "2016-02-26T20:16:53.994478", "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com" }, "body" : "ping!" }
-{ "_id" : ObjectId("56d1078f073dcb6eda67c802"), "header" : { "schema" : null, "encoding" : "utf-8", "event_id" : 1, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "time" : "2016-02-26T20:18:55.388776", "process" : { "name" : "MainProcess", "pid" : 28382, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" } }, "body" : "ping!" }
-{ "_id" : ObjectId("56d10791073dcb6eda67c803"), "header" : { "schema" : null, "encoding" : "utf-8", "event_id" : 1, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "time" : "2016-02-26T20:18:57.415026", "process" : { "name" : "MainProcess", "pid" : 28386, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" } }, "body" : "ping!" }
-{ "_id" : ObjectId("56d10792073dcb6eda67c804"), "header" : { "schema" : null, "encoding" : "utf-8", "process" : { "name" : "MainProcess", "pid" : 28390, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "time" : "2016-02-26T20:18:58.425016", "event_id" : 1, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" } }, "body" : "ping!" }
-{ "_id" : ObjectId("56d10793073dcb6eda67c805"), "header" : { "schema" : null, "encoding" : "utf-8", "process" : { "name" : "MainProcess", "pid" : 28394, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" }, "time" : "2016-02-26T20:18:59.401086", "event_id" : 1, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com" }, "body" : "ping!" }
-{ "_id" : ObjectId("56d10799073dcb6eda67c806"), "header" : { "schema" : null, "encoding" : "utf-8", "process" : { "name" : "MainProcess", "pid" : 28406, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "time" : "2016-02-26T20:19:05.446384", "event_id" : 1, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" } }, "body" : "ping!" }
-{ "_id" : ObjectId("56d1079c073dcb6eda67c807"), "header" : { "schema" : null, "encoding" : "utf-8", "event_id" : 1, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "time" : "2016-02-26T20:19:08.352281", "process" : { "name" : "MainProcess", "pid" : 28410, "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent" }, "host" : { "name" : "thought.local", "IPv4" : "10.0.1.214" } }, "body" : "ping!" }
-{ "_id" : ObjectId("56d109f7073dcb72468780a4"), "header" : { "process" : { "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent", "pid" : 29271, "name" : "MainProcess" }, "schema" : null, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "event_id" : 1, "host" : { "IPv4" : "10.0.1.214", "name" : "thought.local" }, "encoding" : "utf-8", "time" : "2016-02-26T20:29:11.158313" }, "body" : "ping!" }
-{ "_id" : ObjectId("56d109fa073dcb72468780a5"), "header" : { "process" : { "cwd" : "/Users/rich/projects/HISC/spikes/simpleevent", "pid" : 29280, "name" : "MainProcess" }, "schema" : null, "public_key" : "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxncE8JXF28pxUigzurxkmtjAw1DjNYbZR7BbJ7xdS9WU5DGBNJa4Mu0rNNp+MWPEiHlisSLPU1M/z6HF7sq3nx5mbd6oR0/Y/55s4mus7wMUOyax3hFzBHEF/bXIgeQOFOg1/1ITEAwwg2/W7xBBAMZUTgKrmC70Ai2Qf+DRXVUSZ5508STa5qK0ujm2jRaWd53E1jA6QgTolQ8AcHGrX/ICjxpKtpya06VpXOhkLG202RJSuqYos1+kLiJCPBWkf4xlM6kNBzix8CWXXtEba80CUa99ogGC8vgJpCR/Jt1mb5lgnU0NjPVzlx8SWl4h0Ld5t5rFGEETOehc/D8mNQ== rpd@noradltd.com", "event_id" : 1, "host" : { "IPv4" : "10.0.1.214", "name" : "thought.local" }, "encoding" : "utf-8", "time" : "2016-02-26T20:29:14.123708" }, "body" : "ping!" }
+{
+offset: 0,
+rows: [
+{
+_id: {
+$oid: "56df2637073dcb2252d7c9c1"
+},
+body: {
+start: "start"
+},
+header: {
+public_key: null,
+encoding: "utf-8",
+event_id: 0,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T13:21:27.234596",
+schema: null,
+process: {
+name: "MainProcess",
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 74472
+}
+}
+},
+{
+_id: {
+$oid: "56df2637073dcb2252d7c9c4"
+},
+body: "ping!",
+header: {
+public_key: null,
+encoding: "utf-8",
+event_id: 1,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T13:21:27.235895",
+schema: null,
+process: {
+name: "MainProcess",
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 74472
+}
+}
+},
+{
+_id: {
+$oid: "56df2637073dcb2252d7c9c6"
+},
+body: "pong!",
+header: {
+public_key: null,
+encoding: "utf-8",
+event_id: 2,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T13:21:27.237287",
+schema: null,
+process: {
+name: "MainProcess",
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 74472
+}
+}
+},
+{
+_id: {
+$oid: "56df2637073dcb2252d7c9c8"
+},
+body: {
+tick: "2016-03-08T13:21:27.239166"
+},
+header: {
+public_key: null,
+encoding: "utf-8",
+event_id: 3,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T13:21:27.239185",
+schema: null,
+process: {
+name: "MainProcess",
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 74472
+}
+}
+},
+{
+_id: {
+$oid: "56df59f6073dcb86327ff690"
+},
+body: "ping!",
+header: {
+encoding: "utf-8",
+public_key: null,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T17:02:14.349381",
+event_id: 1,
+process: {
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 99935,
+name: "MainProcess"
+},
+schema: null
+}
+},
+{
+_id: {
+$oid: "56df59f6073dcb86327ff691"
+},
+body: "pong!",
+header: {
+encoding: "utf-8",
+public_key: null,
+host: {
+IPv4: "10.0.1.214",
+name: "thought.local"
+},
+time: "2016-03-08T17:02:14.351607",
+event_id: 2,
+process: {
+cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+pid: 99922,
+name: "MainProcess"
+},
+schema: null
+}
+}
+],
+total_rows: 6,
+query: { },
+millis: 0
+}
 ```
 
