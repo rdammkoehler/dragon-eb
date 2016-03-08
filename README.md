@@ -14,17 +14,23 @@ You will need to install the following things;
 Use pip to install the dependencies in requirements.txt. At the time of this writing;
 
 celery==3.1.22
+
 pika==0.10.0
+
 pymongo==3.2.1
+
 redis==2.10.5
+
 
 Run:
 
 	pip install -r requirements.txt
 
 # Etc
-Check MongoDB status at http://localhost:28017/
-Check RabbitMQ status at http://localhost:15672/#/
+
+Check MongoDB status at [http://localhost:28017/](http://localhost:28017/)
+
+Check RabbitMQ status at [http://localhost:15672/#/](http://localhost:15672/#/)
 
 
 # How to Run
@@ -47,17 +53,20 @@ Client Side:
 	python event_chain_test.py
 
 Result:
+
 You should see output like this;
-starting event chain 0
-blah
-starting event chain 1
-hello world
-starting event chain 2
-hello %user%
+
+	starting event chain 0
+	blah
+	starting event chain 1
+	hello world
+	starting event chain 2
+	hello %user%
 
 Where %user% is your user name
 
 What's Missing?
+
 Almost everything, this was just an attempt to connect DragonEB to Celery and see what happens.
 
 
@@ -75,6 +84,7 @@ Client Side:
 	python dead_handler.py
 
 Result:
+
 Two messages logged into the dragon.deadpool collection of Mongo DB for the error and the critial message.
 
 You can view the content of the deadpool at;
@@ -94,6 +104,7 @@ or;
 Additional examples are in the file test_rest_mongo.sh
 
 What's missing?
+
 Need better handling of exceptions (not json serializable) and string value substitutions
 
 # Logger (RabbitMQ, MongoDB)
@@ -105,9 +116,11 @@ Client Side:
 Run anything that uses a logger, dead_handler.py is a good choice. 
 
 Result:
+
 Messages should be logged to the dragon.log collection in Mongo DB.
 
 What's missing?
+
 Logger only logs event ID > 99. SysLogger logs 0-99, no example client for SysLogger.
 
 # Notification (RabbitMQ, MongoDB)
@@ -119,6 +132,7 @@ Client Side:
 Included in the server.
 
 Result:
+
 You should not see any output. What's happening is the notifier is sending notifications, acknowledger is acknowledgeing them, notifier is checking to see that its messages were acknowledged.
 
 What's missing?
@@ -133,13 +147,17 @@ Clien Side:
 Included in the server.
 
 Result:
+
 Registrar will complain via the command channel that various event messages were not registered. These messages are not captured by registrar so you have to setup a listener for them
 
 What's Missing?
+
 There is no database behind the registrar, it just keeps track in memory. IRL we want this to keep track via a database and complain about 'new events' but remember forever the old ones. 
 
 # Resource Ready Nofifier (RabbitMQ, MongoDB, Apache)
+
 Apache (Mac):
+
 Place a file named README.md in /Library/WebServer/Documents
 
 	sudo cp README.md /Library/WebServer/Documents/README.md
@@ -157,13 +175,17 @@ Client Side:
 	python resource_ready_nofifier.py
 
 Result:
+
 The content of README.md will be displayed on the screen by the server.
 
 What's missing?
+
 Pretty close to complete
 
 # Ticker (RabbitMQ)
+
 Server Side:
+
 None.
 
 Client Side:
@@ -171,28 +193,35 @@ Client Side:
 	python ticker.py
 
 Result:
+
 A tick message will be placed on the command channel (dragon.event)
 
 What's Missing?
+
 A server/receiver. At some point there was such a beast but has been lost. Not sure how practical this is IRL anyway.
 
 # Rabbit Client (RabbitMQ)
+
 Server Side:
 
 	python rabbit_client.py
 
 Client Side:
+
 Included in Server Side.
 
 Result:
+
 On STDOUT you should see the following;
 
 	 [x] received b'{ "hello": "I am Groot!" }'
 
 What's Missing?
+
 Nothing.
 
 # Ping-Pong Example (RabbitMQ) [out of date]
+
 Start the server side
 
 	python ponger.py &
