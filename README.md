@@ -239,148 +239,148 @@ Ponger should have written a json message into a database named dragon and a col
 
 ```json
 {
-offset: 0,
-rows: [
-{
-_id: {
-$oid: "56df2637073dcb2252d7c9c1"
-},
-body: {
-start: "start"
-},
-header: {
-public_key: null,
-encoding: "utf-8",
-event_id: 0,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T13:21:27.234596",
-schema: null,
-process: {
-name: "MainProcess",
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 74472
-}
-}
-},
-{
-_id: {
-$oid: "56df2637073dcb2252d7c9c4"
-},
-body: "ping!",
-header: {
-public_key: null,
-encoding: "utf-8",
-event_id: 1,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T13:21:27.235895",
-schema: null,
-process: {
-name: "MainProcess",
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 74472
-}
-}
-},
-{
-_id: {
-$oid: "56df2637073dcb2252d7c9c6"
-},
-body: "pong!",
-header: {
-public_key: null,
-encoding: "utf-8",
-event_id: 2,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T13:21:27.237287",
-schema: null,
-process: {
-name: "MainProcess",
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 74472
-}
-}
-},
-{
-_id: {
-$oid: "56df2637073dcb2252d7c9c8"
-},
-body: {
-tick: "2016-03-08T13:21:27.239166"
-},
-header: {
-public_key: null,
-encoding: "utf-8",
-event_id: 3,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T13:21:27.239185",
-schema: null,
-process: {
-name: "MainProcess",
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 74472
-}
-}
-},
-{
-_id: {
-$oid: "56df59f6073dcb86327ff690"
-},
-body: "ping!",
-header: {
-encoding: "utf-8",
-public_key: null,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T17:02:14.349381",
-event_id: 1,
-process: {
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 99935,
-name: "MainProcess"
-},
-schema: null
-}
-},
-{
-_id: {
-$oid: "56df59f6073dcb86327ff691"
-},
-body: "pong!",
-header: {
-encoding: "utf-8",
-public_key: null,
-host: {
-IPv4: "10.0.1.214",
-name: "thought.local"
-},
-time: "2016-03-08T17:02:14.351607",
-event_id: 2,
-process: {
-cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
-pid: 99922,
-name: "MainProcess"
-},
-schema: null
-}
-}
-],
-total_rows: 6,
-query: { },
-millis: 0
+	offset: 0,
+	rows: [
+			{
+				_id: {
+						$oid: "56df2637073dcb2252d7c9c1"
+				},
+				body: {
+					start: "start"
+				},
+				header: {
+					public_key: null,
+					encoding: "utf-8",
+					event_id: 0,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T13:21:27.234596",
+					schema: null,
+					process: {
+						name: "MainProcess",
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 74472
+					}
+				}
+			},
+			{
+				_id: {
+						$oid: "56df2637073dcb2252d7c9c4"
+				},
+				body: "ping!",
+				header: {
+					public_key: null,
+					encoding: "utf-8",
+					event_id: 1,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T13:21:27.235895",
+					schema: null,
+					process: {
+						name: "MainProcess",
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 74472
+					}
+				}
+			},
+			{
+				_id: {
+						$oid: "56df2637073dcb2252d7c9c6"
+				},
+				body: "pong!",
+				header: {
+					public_key: null,
+					encoding: "utf-8",
+					event_id: 2,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T13:21:27.237287",
+					schema: null,
+					process: {
+						name: "MainProcess",
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 74472
+					}
+				}
+			},
+			{
+				_id: {
+						$oid: "56df2637073dcb2252d7c9c8"
+				},
+				body: {
+					tick: "2016-03-08T13:21:27.239166"
+				},
+				header: {
+					public_key: null,
+					encoding: "utf-8",
+					event_id: 3,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T13:21:27.239185",
+					schema: null,
+					process: {
+						name: "MainProcess",
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 74472
+					}
+				}
+			},
+			{
+				_id: {
+						$oid: "56df59f6073dcb86327ff690"
+				},
+				body: "ping!",
+				header: {
+					encoding: "utf-8",
+					public_key: null,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T17:02:14.349381",
+					event_id: 1,
+					process: {
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 99935,
+						name: "MainProcess"
+					},
+					schema: null
+				}
+			},
+			{
+				_id: {
+						$oid: "56df59f6073dcb86327ff691"
+				},
+				body: "pong!",
+				header: {
+					encoding: "utf-8",
+					public_key: null,
+					host: {
+						IPv4: "10.0.1.214",
+						name: "thought.local"
+					},
+					time: "2016-03-08T17:02:14.351607",
+					event_id: 2,
+					process: {
+						cwd: "/Users/rich/projects/HISC/spikes/simpleevent",
+						pid: 99922,
+						name: "MainProcess"
+					},
+					schema: null
+				}
+			}
+	],
+	total_rows: 6,
+	query: { },
+	millis: 0
 }
 ```
 
