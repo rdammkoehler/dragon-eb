@@ -12,4 +12,4 @@ class ResourceReadyNotifier(DragonBusClient):
         self.send(ResourceReady(resource_url).to_json())
 
 if __name__ == "__main__":
-    ResourceReadyNotifier().notify('file:///Users/rich/projects/HISC/spikes/simpleevent/README.md')
+    ResourceReadyNotifier().notify('http://localhost/README.md')
