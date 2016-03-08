@@ -89,17 +89,17 @@ Two messages logged into the dragon.deadpool collection of Mongo DB for the erro
 
 You can view the content of the deadpool at;
 
-(http://localhost:28017/dragon/deadpool/)
+[http://localhost:28017/dragon/deadpool/]
 
 Note: The trailing slash is required.
 
 You can filter to a log level (ERROR/CRITICAL) at;
 
-(http://localhost:28017/dragon/deadpool/?filter_header.level=ERROR)
+[http://localhost:28017/dragon/deadpool/?filter_header.level=ERROR]
 
 or;
 
-(http://localhost:28017/dragon/deadpool/?filter_header.level=CRITICAL)
+[http://localhost:28017/dragon/deadpool/?filter_header.level=CRITICAL]
 
 Additional examples are in the file test_rest_mongo.sh
 
