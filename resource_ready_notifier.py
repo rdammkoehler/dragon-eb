@@ -12,4 +12,5 @@ class ResourceReadyNotifier(DragonBusClient):
         self.send(ResourceReady(resource_url).to_json())
 
 if __name__ == "__main__":
-    ResourceReadyNotifier().notify('http://localhost/README.md')
+    ResourceReadyNotifier().notify('https://thought.noradltd.com/README.md')
+

@@ -1,6 +1,6 @@
 import json
 import time
-import urllib.request
+import requests
 
 from dragon_eb import DragonBusClient
 from event_id_filter import EventIdFilter
@@ -15,10 +15,7 @@ class ResourceRetriever(DragonBusClient):
 class ResourceCat:
 
     def cat(self, ch, method, properties, json_message):
-        print(urllib.request.urlopen(json_message['body']['resource_url']))
-        with urllib.request.urlopen(json_message['body']['resource_url']) as resource:
-            print('cat')
-            print(resource.read())
+        print(requests.get(json_message['body']['resource_url']))
 
 if __name__ == "__main__":
     ResourceRetriever(ResourceCat().cat).start().join()
