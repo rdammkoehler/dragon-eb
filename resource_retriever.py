@@ -15,7 +15,7 @@ class ResourceRetriever(DragonBusClient):
 class ResourceCat:
 
     def cat(self, ch, method, properties, json_message):
-        print(requests.get(json_message['body']['resource_url']))
+        print(requests.get(json_message['body']['resource_url']).text)
 
 if __name__ == "__main__":
     ResourceRetriever(ResourceCat().cat).start().join()
