@@ -3,8 +3,9 @@ from resource_retriever import ResourceRetriever
 
 
 class ResourceJoin:
-    def __init__(self, callback, mask):
-        self._callback = callback
+    def __init__(self, matched_callback, mask, intermediate_callback=lambda event: event):
+        self._callback = matched_callback
+        self.intermediate_callback = intermediate_callback
         self._mask = mask
         self._retriever = ResourceRetriever(self.accept).start()
 
@@ -13,6 +14,7 @@ class ResourceJoin:
 
     def accept(self, ch, method, properties, simple_event):
         self._mask.add(simple_event)
+        self.intermediate_callback(simple_event)
         if self._mask.matched():
             self._callback(self)
 

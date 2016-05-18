@@ -7,7 +7,9 @@ class ResourceReadyNotifier(DragonBusClient):
         DragonBusClient.__init__(self)
 
     def notify(self, resource_url):
-        self.send(ResourceReady(resource_url).to_json())
+        msg = ResourceReady(resource_url).to_json()
+        self.send(msg)
+        return msg
 
 
 if __name__ == "__main__":
