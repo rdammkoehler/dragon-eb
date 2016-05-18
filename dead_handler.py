@@ -3,8 +3,8 @@ import logging
 from dragon_eb import DragonBusClient
 from simple_event import LogMessage
 
-class DeadHandler(DragonBusClient, logging.Handler):
 
+class DeadHandler(DragonBusClient, logging.Handler):
     def __init__(self):
         DragonBusClient.__init__(self)
         self.level = 0
@@ -13,6 +13,7 @@ class DeadHandler(DragonBusClient, logging.Handler):
 
     def emit(self, record):
         self.send(LogMessage(record).to_json())
+
 
 if __name__ == "__main__":
     logger = logging.getLogger()

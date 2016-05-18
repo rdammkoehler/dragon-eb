@@ -2,11 +2,10 @@ import time
 
 from dragon_eb import DragonBusClient
 from event_id_filter import EventIdFilter
-from filter import FilterChain
 from simple_event import Notification, Acknowledgement
 
-class Notifier(DragonBusClient):
 
+class Notifier(DragonBusClient):
     def __init__(self, check_acknowledgement=False):
         self.acked = []
         if check_acknowledgement:
@@ -29,13 +28,13 @@ class Notifier(DragonBusClient):
         for ack in self.acked:
             if message == ack['body']['acknowledge']['body']:
                 kill = ack
-                rval =  True
+                rval = True
         if rval:
             self.acked.remove(kill)
         return rval
 
-class Acknowledger(DragonBusClient):
 
+class Acknowledger(DragonBusClient):
     def ack():
         return Acknowledger().start()
 
@@ -44,13 +43,14 @@ class Acknowledger(DragonBusClient):
         self.add_callback(self.__ack)
 
     def __ack(self, ch, method, properties, json_message):
-        self.send(Acknowledgement({ 'acknowledge': json_message }).to_json())
+        self.send(Acknowledgement({'acknowledge': json_message}).to_json())
+
 
 if __name__ == "__main__":
-    acker = Acknowledger.ack()    
+    acker = Acknowledger.ack()
     notifier = Notifier(check_acknowledgement=True)
     for pid in range(5):
-        message = { 'proc' : pid }
+        message = {'proc': pid}
         notifier.notify(message)
         time.sleep(1)  # thanks to the GIL we need to take a nap or this contrivance won't work
         if not notifier.acknowledged(message):

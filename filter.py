@@ -1,13 +1,12 @@
 class Filter:
-
     def __init__(self, response=True):
         self.response = response
 
     def accept(self, any):
         return self.response
 
-class FilterChain(Filter):
 
+class FilterChain(Filter):
     def __init__(self, *args):
         self.filters = list(args)
 

@@ -1,8 +1,8 @@
 from rabbit_client import RabbitCommandClient
 from simple_event import Trigger
 
-class EventChainTest():
 
+class EventChainTest():
     def __init__(self):
         self.rcc = RabbitCommandClient(exchange='dragon', routing_key='dragon.command')
 
@@ -17,6 +17,7 @@ class EventChainTest():
 
     def test_hello_user(self):
         self.__trigger(2)
+
 
 if __name__ == '__main__':
     ect = EventChainTest()

@@ -1,4 +1,3 @@
-import datetime
 import time
 
 from dragon_eb import DragonBusClient
@@ -6,8 +5,8 @@ from event_id_filter import EventIdExclusionFilter
 from rabbit_client import RabbitCommandClient
 from simple_event import *
 
-class Registrar(DragonBusClient):
 
+class Registrar(DragonBusClient):
     def __init__(self):
         DragonBusClient.__init__(self, EventIdExclusionFilter(10000))
         self.registered_events = {}  # replace with a database
@@ -27,6 +26,7 @@ class Registrar(DragonBusClient):
     def dump(self):
         return self.registered_events
 
+
 if __name__ == "__main__":
     reg = Registrar().start()
 
@@ -35,8 +35,8 @@ if __name__ == "__main__":
     rcc.send(json_string=Ping().to_json(), exchange='dragon', routing_key='dragon.command')
     rcc.send(json_string=Pong().to_json(), exchange='dragon', routing_key='dragon.command')
     rcc.send(json_string=Tick(datetime.datetime.now()).to_json(), exchange='dragon', routing_key='dragon.command')
-    rcc.send(json_string=Notification({ 'message': 'hi mom'}).to_json(), exchange='dragon', routing_key='dragon.command')
-    rcc.send(json_string=Acknowledgement({ 'ack': 'hi rich'}).to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Notification({'message': 'hi mom'}).to_json(), exchange='dragon', routing_key='dragon.command')
+    rcc.send(json_string=Acknowledgement({'ack': 'hi rich'}).to_json(), exchange='dragon', routing_key='dragon.command')
     rcc.send(json_string=ResourceReady('http://google.com').to_json(), exchange='dragon', routing_key='dragon.command')
 
     time.sleep(1)

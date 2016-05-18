@@ -1,15 +1,15 @@
-import pika
 import threading
-import time
+
+import pika
+
 
 class RabbitClient:
-
     def __init__(self):
         self.conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.chan = self.conn.channel()
 
-class RabbitCommandClient(RabbitClient):
 
+class RabbitCommandClient(RabbitClient):
     def __init__(self, exchange, routing_key):
         RabbitClient.__init__(self)
         self.chan.exchange_declare(exchange=exchange, type='fanout')
@@ -47,10 +47,13 @@ class RabbitCommandClient(RabbitClient):
         self.stop()
         self.conn.close()
 
+
 def callback(ch, method, properties, body):
     print(" [x] received %r" % body)
 
+
 if __name__ == "__main__":
     RabbitCommandClient(exchange='test', routing_key='test.routing_key').recv(callback).start()
-    RabbitCommandClient(exchange='test', routing_key='test.routing_key').send(json_string='{ "hello": "I am Groot!" }', exchange='test', routing_key='test.routing_key')
-    
+    RabbitCommandClient(exchange='test', routing_key='test.routing_key').send(json_string='{ "hello": "I am Groot!" }',
+                                                                              exchange='test',
+                                                                              routing_key='test.routing_key')

@@ -1,6 +1,7 @@
 # to eventually move to its own world
-from jsonpath_rw import parse
 import re
+
+from jsonpath_rw import parse
 
 
 class Condition:
@@ -22,17 +23,21 @@ class Condition:
 class Mask:
     def __init__(self, conditions):
         self.conditions = list(conditions)
-        self.events = []
+        self._events = []
         self._matched = False
 
+
+    def events(self):
+        return self._events
+
     def add(self, simple_event):
-        self.events.append(simple_event)
+        self._events.append(simple_event)
         self.check()
 
     def check(self):
         matches = 0
         for condition in self.conditions:
-            for event in self.events:
+            for event in self._events:
                 if condition.matches(event):
                     matches += 1
                     break
@@ -45,18 +50,19 @@ class Mask:
         str = []
         for condition in self.conditions:
             matching = None
-            for event in self.events:
+            for event in self._events:
                 if condition.matches(event):
                     matching = event
                     break
             if matching:
                 str.append("%s == %s" % (condition, matching))
             else:
-                str.append("%s unmatched" % (condition))
+                str.append("%s unmatched" % condition)
         return '\n'.join(str)
 
     def __repr__(self):
         return self.__str__()
+
 
 # e.g.
 if __name__ == "__main__":
@@ -72,7 +78,7 @@ if __name__ == "__main__":
 
     c1 = Condition('body.resource_url', re.compile('.*agencies.jsonl'))
     c2 = Condition('body.resource_url', re.compile('.*caregivers.*'))
-    m = Mask([c1,c2])
+    m = Mask([c1, c2])
     print("%s" % m.matched)
     rr = ResourceReady("http://localhost/agencies.jsonl")
     m.add(rr)
@@ -84,7 +90,7 @@ if __name__ == "__main__":
 
     c1 = Condition('body.resource_url', re.compile('.*agencies.jsonl'))
     c2 = Condition('body.resource_url', re.compile('.*caregivers.*'))
-    m = Mask([c1,c2])
+    m = Mask([c1, c2])
     print("%s" % m.matched)
     rr = ResourceReady("http://localhost/agencies.jsonl")
     m.add(rr)
@@ -99,7 +105,7 @@ if __name__ == "__main__":
 
     c1 = Condition('body.resource_url', re.compile('.*agencies.jsonl'))
     c2 = Condition('body.resource_url', re.compile('https://.*'))
-    m = Mask([c1,c2])
+    m = Mask([c1, c2])
     print("%s" % m.matched)
     rr = ResourceReady("https://localhost/agencies.jsonl")
     m.add(rr)

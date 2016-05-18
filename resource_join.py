@@ -3,18 +3,32 @@ from resource_retriever import ResourceRetriever
 
 
 class ResourceJoin:
-    def __init__(self, mask):
-        self.mask = mask
-        self.retriever = ResourceRetriever(self.accept).start()
+    def __init__(self, callback, mask):
+        self._callback = callback
+        self._mask = mask
+        self._retriever = ResourceRetriever(self.accept).start()
+
+    def mask(self):
+        return self._mask
 
     def accept(self, ch, method, properties, simple_event):
-        self.mask.add(simple_event)
-        if self.mask.matched():
-            self.retriever.stop()
+        self._mask.add(simple_event)
+        if self._mask.matched():
+            self._callback(self)
+
+    def stop(self):
+        self._retriever.stop()
 
     def join(self):
-        self.retriever.join()
+        self._retriever.join()
 
+
+def blah(joiner):
+    print("blah received the following events:")
+    for event in joiner.mask().events():
+        print(event)
+    print("stopping the joiner!")
+    joiner.stop()
 
 # e.g.
 if __name__ == "__main__":
@@ -26,6 +40,4 @@ if __name__ == "__main__":
                   '.*shifts.jsonl',
                   '.*timezone_agencies.jsonl']
     mask = Mask([Condition("body.resource_url", file_mask) for file_mask in file_regex])
-    ResourceJoin(mask).join()
-    print('all conditions match')
-    print(mask)
+    ResourceJoin(blah, mask).join()

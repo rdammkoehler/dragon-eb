@@ -4,14 +4,15 @@ import os
 from filter import Filter
 from rabbit_client import RabbitCommandClient
 
-class DragonBusClient:
 
-    EXCHANGE='dragon'
+class DragonBusClient:
+    EXCHANGE = 'dragon'
     ROUTING_KEY = 'dragon.command'
 
     def __init__(self, message_filter=Filter()):
         self.message_filter = message_filter
-        self.rmq_client = RabbitCommandClient(exchange=self.EXCHANGE, routing_key=self.ROUTING_KEY)  # TODO, insulate us from Rabbit
+        self.rmq_client = RabbitCommandClient(exchange=self.EXCHANGE,
+                                              routing_key=self.ROUTING_KEY)  # TODO, insulate us from Rabbit
         self.rmq_client.recv(callback=self.on_message)
         self.callbacks = []
         self.thread = None

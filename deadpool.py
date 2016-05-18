@@ -1,13 +1,11 @@
-import json
+from pymongo import MongoClient
 
 from dragon_eb import DragonBusClient
 from event_id_filter import EventIdFilter
 
-from pymongo import MongoClient
 
 class Deadpool(DragonBusClient):
-
-    DEAD_LEVELS = [ 'ERROR', 'CRITICAL' ]
+    DEAD_LEVELS = ['ERROR', 'CRITICAL']
 
     def __init__(self):
         DragonBusClient.__init__(self, EventIdFilter(1001))

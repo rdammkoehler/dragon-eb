@@ -120,7 +120,7 @@ class Deny(SimpleEvent):
 class ResourceDisposalNotification(Issue):
     def __init__(self, resource_url, disposal_time):
         Issue.__init__(self, 'resource_disposal_event', body={'resource_url': resource_url,
-                                                        'disposal_time': disposal_time.isoformat()})
+                                                              'disposal_time': disposal_time.isoformat()})
 
 
 class ResourceDisposalApprove(Approve):
