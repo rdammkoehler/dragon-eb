@@ -1,6 +1,8 @@
 # This represents the interaction(s) between DC and DR tiers in Dragon
 import logging
 
+# TODO this example leaks sockets on rabbit at a rate of about 8 per run (not always 8), fix!
+# TODO investigate how to use a context manager in this beast (Up At Rabbit Client?) to avoid leaking
 
 FORMAT = '%(asctime)-15s -- %(processName)-15s -- %(threadName)-10s -- %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -31,20 +33,13 @@ class DataRetention:
                       '.*timezone_agencies.jsonl']
         mask = Mask([Condition("body.resource_url", file_mask) for file_mask in file_regex])
         ResourceJoin(matched_callback=self.retain_data,
-                     # intermediate_callback=self.acknowledge,
                      mask=mask).join()
-
-    # def acknowledge(self, event):
-    #     from dragon_eb import DragonBusClient
-    #     from simple_event import Acknowledgement
-    #
-    #     DragonBusClient().send(Acknowledgement({'acknowledge': event}).to_json())
 
     def retain_data(self, joiner):
         '''we get called only if all the resources ready notifications have been received'''
         logging.info("Starting to Retain Data")
         from dragon_eb import DragonBusClient
-        from simple_event import ResourceConsumed
+        from simple_event import ResourceConsumed, ResourceIrretrievable
 
         class ConsumptionNotifier(DragonBusClient):
             def __init__(self):
@@ -65,7 +60,17 @@ class DataRetention:
                     time.sleep(1)
                     notifier.send_notice(url)
                 else:
+                    logging.warning("failed to consume %s" % url)
                     failures.append(url)
+                    class ResourceIrretrievableSender(DragonBusClient):
+                        def __init__(self):
+                            DragonBusClient.__init__(self)
+
+                        def send_notice(self, url):
+                            self.send(ResourceIrretrievable(url).to_json())
+                    ResourceIrretrievableSender().send_notice(url)
+                    logging.info("sent ResourceIrretrievable message for %s" % url)
+
             # TODO if one or more resources could not be fetched, we'd have to do something about it
             #      if failures is not empty we have a problem. Send a 'Retry' to the source and wait some more?
             #      \ this is a serious issue that you must resolve. We've left the Joiner, so now we need another joiner
@@ -76,7 +81,7 @@ class DataRetention:
             #      \ having actually received its file?
             #      Clearly Consumption Notifier shoul be sending ACKs! But we'd still have the
             #      \ issue of consumption notifications -- not out of the woods yet.
-            joiner.stop()
+            joiner.stop()  # Possibly IRL instead of stopping we'd spin a process if we have what we need and send a message if we don't
             logging.info("ResourceJoiner stopped -- %s" % failures)
         except:
             logging.exception("failed to retrieve resources")
@@ -90,12 +95,10 @@ class DataCollection:
 
     def __init__(self):
         self.receivers = []
-        # self.acknowledgments = []
         logging.basicConfig(format=FORMAT, level=logging.INFO)
 
     def __str__(self):
         return "DataCollection.receivers: %s" % self.receivers
-        #return "DataCollection.receivers: %s\nDataCollection.acknowledgments: %s" % (self.receivers, self.acknowledgments)
 
     def run(self):
         logging.info("starting data collection")
@@ -107,10 +110,6 @@ class DataCollection:
             logging.info("Sending Resource Ready Event for %s" % url)
             self.receivers.append(self.start_listener_for(url))
             notifier.notify(url)
-            # TODO Acknowledgements should be on a chain of callbacks rather than another callback
-            # msg = notifier.notify(url)
-            #self.acknowledgments.append(self.start_ack_listener_for(msg))  # probable timing issue here
-        #self.wait_for_all(self.acknowledgments)
         self.wait_for_all(self.receivers)
         logging.info("all ConsumptionNotifications received")
 
@@ -121,43 +120,34 @@ class DataCollection:
 
     def start_listener_for(self, url):
         from dragon_eb import DragonBusClient
-        from event_id_filter import EventIdFilter
+        from filter import FilterChain
+        from event_id_filter import EventIdFilter, EventIdRangeFilter
 
         class ConsumptionReceiver(DragonBusClient):
             def __init__(self, url):
-                DragonBusClient.__init__(self, EventIdFilter(2001))
+                # TODO looks like FilterChain is broken/not working as expected
+                # DragonBusClient.__init__(self, FilterChain(EventIdFilter(2001),
+                #                                            EventIdFilter(2002)))
+                # DragonBusClient.__init__(self, EventIdFilter(2001))
+                DragonBusClient.__init__(self, EventIdRangeFilter(2001,2002))
                 self.url = url
                 self.add_callback(self.receipt)
 
             def receipt(self, ch, method, properties, json_message):
-                logging.info("received receipt %s" % json_message)
-                if self.url == json_message['body']['resource_url']:
-                    self.stop()
-
+                logging.info("received message %s" % json_message)
+                if json_message['header']['event_id'] == 2001:
+                    logging.info("received receipt %s" % json_message)
+                    if self.url == json_message['body']['resource_url']:
+                        logging.info("stopping listener for %s" % self.url)
+                        self.stop()
+                else:
+                    if self.url == json_message['body']['resource_url']:
+                        logging.error("delivery appears to have failed %s" % json_message)
+                        self.stop()  # TODO long haul we need to retransmit; seems like a good place for an event!
         cr = ConsumptionReceiver(url)
         cr.start()
         return cr
 
-    # def start_ack_listener_for(self, msg):
-    #     from dragon_eb import DragonBusClient
-    #     from event_id_filter import EventIdFilter
-    #
-    #     class AckListener(DragonBusClient):
-    #         def __init__(self, msg):
-    #             DragonBusClient.__init__(self, EventIdFilter(9999))
-    #             self.msg = msg
-    #             self.add_callback(self.acknowledged)
-    #
-    #         def acknowledged(self, ch, method, properties, json_message):
-    #             logging.info("received acknowledgement %s" % json_message)
-    #             # if message == ack['body']['acknowledge']['body']:
-    #             if self.msg == json_message['body']['acknowledge']['body']:
-    #                 # TODO something important should happen here
-    #                 print("ACK: %s" % msg)
-    #
-    #     al = AckListener(msg)
-    #     al.start()
-    #     return al
 
 
 from multiprocessing import Process

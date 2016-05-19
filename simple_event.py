@@ -97,6 +97,14 @@ class ResourceReady(SimpleEvent):
                              )
 
 
+# Could be sub-classed into any number of things
+class ResourceIrretrievable(SimpleEvent):
+    def __init__(self, resource_url):
+        SimpleEvent.__init__(self, event_id=2002,
+                             body={'resource_url': resource_url}
+                             )
+
+
 class ResourceConsumed(SimpleEvent):
     def __init__(self, resource_url):
         SimpleEvent.__init__(self, event_id=2001, body={'resource_url': resource_url})

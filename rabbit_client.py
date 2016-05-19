@@ -8,6 +8,25 @@ class RabbitClient:
         self.conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.chan = self.conn.channel()
 
+    def start(self):
+        reg_thread = threading.Thread(target=self.__start)
+        reg_thread.setDaemon(True)
+        reg_thread.start()
+        return reg_thread
+
+    def __start(self):
+        try:
+            self.chan.start_consuming()
+        except KeyboardInterrupt:
+            self.stop()
+
+    def stop(self):
+        self.chan.stop_consuming()
+
+    def __del__(self):
+        self.stop()
+        self.conn.close()
+
 
 class RabbitCommandClient(RabbitClient):
     def __init__(self, exchange, routing_key):
@@ -27,25 +46,6 @@ class RabbitCommandClient(RabbitClient):
     def recv(self, callback, no_ack=True):
         self.chan.basic_consume(callback, queue=self.queue_name, no_ack=no_ack)
         return self
-
-    def start(self):
-        reg_thread = threading.Thread(target=self.__start)
-        reg_thread.setDaemon(True)
-        reg_thread.start()
-        return reg_thread
-
-    def __start(self):
-        try:
-            self.chan.start_consuming()
-        except KeyboardInterrupt:
-            self.stop()
-
-    def stop(self):
-        self.chan.stop_consuming()
-
-    def __del__(self):
-        self.stop()
-        self.conn.close()
 
 
 def callback(ch, method, properties, body):
