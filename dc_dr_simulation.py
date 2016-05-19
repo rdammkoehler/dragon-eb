@@ -30,13 +30,15 @@ class DataRetention:
                       '.*shifts.jsonl',
                       '.*timezone_agencies.jsonl']
         mask = Mask([Condition("body.resource_url", file_mask) for file_mask in file_regex])
-        ResourceJoin(matched_callback=self.retain_data, intermediate_callback=self.acknowledge, mask=mask).join()
+        ResourceJoin(matched_callback=self.retain_data,
+                     # intermediate_callback=self.acknowledge,
+                     mask=mask).join()
 
-    def acknowledge(self, event):
-        from dragon_eb import DragonBusClient
-        from simple_event import Acknowledgement
-
-        DragonBusClient().send(Acknowledgement({'acknowledge': event}).to_json())
+    # def acknowledge(self, event):
+    #     from dragon_eb import DragonBusClient
+    #     from simple_event import Acknowledgement
+    #
+    #     DragonBusClient().send(Acknowledgement({'acknowledge': event}).to_json())
 
     def retain_data(self, joiner):
         '''we get called only if all the resources ready notifications have been received'''
@@ -60,7 +62,7 @@ class DataRetention:
                 response = requests.get(url, verify='ca-chain.cert.pem')
                 if response.status_code in range(200, 299):  #  TODO IRL we need to handle redirects
                     print("%s -- %s" % (url, response.text))
-                    time.sleep(5)
+                    time.sleep(1)
                     notifier.send_notice(url)
                 else:
                     failures.append(url)
@@ -88,11 +90,12 @@ class DataCollection:
 
     def __init__(self):
         self.receivers = []
-        self.acknowledgments = []
+        # self.acknowledgments = []
         logging.basicConfig(format=FORMAT, level=logging.INFO)
 
     def __str__(self):
-        return "DataCollection.receivers: %s\nDataCollection.acknowledgments: %s" % (self.receivers, self.acknowledgments)
+        return "DataCollection.receivers: %s" % self.receivers
+        #return "DataCollection.receivers: %s\nDataCollection.acknowledgments: %s" % (self.receivers, self.acknowledgments)
 
     def run(self):
         logging.info("starting data collection")
@@ -103,8 +106,10 @@ class DataCollection:
             url = "https://ender.noradltd.com/%s" % resource
             logging.info("Sending Resource Ready Event for %s" % url)
             self.receivers.append(self.start_listener_for(url))
-            msg = notifier.notify(url)
-            self.acknowledgments.append(self.start_ack_listener_for(msg))  # probable timing issue here
+            notifier.notify(url)
+            # TODO Acknowledgements should be on a chain of callbacks rather than another callback
+            # msg = notifier.notify(url)
+            #self.acknowledgments.append(self.start_ack_listener_for(msg))  # probable timing issue here
         #self.wait_for_all(self.acknowledgments)
         self.wait_for_all(self.receivers)
         logging.info("all ConsumptionNotifications received")
@@ -133,26 +138,26 @@ class DataCollection:
         cr.start()
         return cr
 
-    def start_ack_listener_for(self, msg):
-        from dragon_eb import DragonBusClient
-        from event_id_filter import EventIdFilter
-
-        class AckListener(DragonBusClient):
-            def __init__(self, msg):
-                DragonBusClient.__init__(self, EventIdFilter(9999))
-                self.msg = msg
-                self.add_callback(self.acknowledged)
-
-            def acknowledged(self, ch, method, properties, json_message):
-                logging.info("received acknowledgement %s" % json_message)
-                # if message == ack['body']['acknowledge']['body']:
-                if self.msg == json_message['body']['acknowledge']['body']:
-                    # TODO something important should happen here
-                    print("ACK: %s" % msg)
-
-        al = AckListener(msg)
-        al.start()
-        return al
+    # def start_ack_listener_for(self, msg):
+    #     from dragon_eb import DragonBusClient
+    #     from event_id_filter import EventIdFilter
+    #
+    #     class AckListener(DragonBusClient):
+    #         def __init__(self, msg):
+    #             DragonBusClient.__init__(self, EventIdFilter(9999))
+    #             self.msg = msg
+    #             self.add_callback(self.acknowledged)
+    #
+    #         def acknowledged(self, ch, method, properties, json_message):
+    #             logging.info("received acknowledgement %s" % json_message)
+    #             # if message == ack['body']['acknowledge']['body']:
+    #             if self.msg == json_message['body']['acknowledge']['body']:
+    #                 # TODO something important should happen here
+    #                 print("ACK: %s" % msg)
+    #
+    #     al = AckListener(msg)
+    #     al.start()
+    #     return al
 
 
 from multiprocessing import Process
