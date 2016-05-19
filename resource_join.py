@@ -24,6 +24,12 @@ class ResourceJoin:
     def join(self):
         self._retriever.join()
 
+    def __str__(self):
+        return str(self._mask)
+
+    def __repr__(self):
+        return self.__str__()
+
 
 def blah(joiner):
     print("blah received the following events:")

@@ -5,6 +5,12 @@ class Filter:
     def accept(self, any):
         return self.response
 
+    def __str__(self):
+        return 'True'
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class FilterChain(Filter):
     def __init__(self, *args):

@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from filter import Filter
@@ -34,12 +35,14 @@ class DragonBusClient:
             pass
 
     def send(self, json_string):
+        logging.info("send(%s)" % json_string)
         self.rmq_client.send(json_string=json_string, exchange=self.EXCHANGE, routing_key=self.ROUTING_KEY)
 
     def on_message(self, ch, method, properties, message):
         json_message = self.__json_of(message)
         if json_message:
             if self.message_filter.accept(json_message):
+                logging.info("on_message(...) using %s accepts %s" % (self.message_filter, json_message))
                 for callback in self.callbacks:
                     callback(ch, method, properties, json_message)
 
