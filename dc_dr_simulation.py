@@ -70,31 +70,49 @@ class DataCollection(DragonBusClient):
 
     def receipt(self, ch, method, properties, json_message):
         logging.info("receipt(%s) %s" % (json_message, self))
+        # TODO replace with sexy dictionary of functions
         if json_message['header']['event_id'] == 2001:
             logging.info("looking for %s in %s" % (json_message['body']['resource_url'], self.receipts))
             if json_message['body']['resource_url'] in self.receipts:
                 logging.info("removing %s from %s" % (json_message['body']['resource_url'], self.receipts))
                 self.receipts.remove(json_message['body']['resource_url'])
-                # if not self.receipts:
-                #     self.stop()
+        if json_message['header']['event_id'] == 2002:
+            logging.info("handling fowled resource %s" % (json_message['body']['resource_url']))
+            self.retransmit(json_message['body']['resource_url'])
 
     def __str__(self):
         return "DataCollection.receipts: %s" % self.receipts
 
     def run(self):
-        file_names = ['agencies.jsonl', 'caregivers.jsonl', 'care_logs.jsonl', 'clients.jsonl', 'locations.jsonl',
+        file_names = ['agencies.jsonl', 'caregivers.jsonl', 'care_logs.jsonl', 'clients.jsonl', 'locations.jsonl_',
                       'shifts.jsonl', 'timezone_agencies.jsonl']
         for resource in file_names:
             url = "https://ender.noradltd.com/%s" % resource
-            self.receipts.append(url)
+            self.await(url)
             logging.info("receipts %s" % self.receipts)
-            self.send(ResourceReady(url).to_json())
+            self.transmit(url)
         wait_count = 0
         while self.receipts and wait_count < 10:
             logging.info("waiting on receipts %s" % self.receipts)
             time.sleep(1)
             wait_count += 1
         logging.info("failed to complete receipts %s" % self.receipts)
+
+    def await(self, url):
+        self.receipts.append(url)
+
+    def discard(self, url):
+        self.receipts.remove(url)
+
+    def transmit(self, url):
+        self.send(ResourceReady(url).to_json())
+
+    def retransmit(self, url):
+        # Note: This is a hack for demo purposes
+        new_url =url.replace("_", "")
+        self.await(new_url)
+        self.discard(url)
+        self.transmit(new_url)
 
 
 def dr_run():
