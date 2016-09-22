@@ -75,7 +75,7 @@ class DataCollection(DragonBusClient):
         file_names = ['agencies.jsonl', 'caregivers.jsonl', 'care_logs.jsonl', 'clients.jsonl', 'locations.jsonl_',
                       'shifts.jsonl', 'timezone_agencies.jsonl']
         for resource in file_names:
-            url = "https://ender.noradltd.com/%s" % resource
+            url = "https://localhost/%s" % resource
             self.send(ResourceReady(url).to_json())
         wait_count = 0
         while self.receipts and wait_count < 10:
