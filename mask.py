@@ -3,6 +3,26 @@ import re
 
 from jsonpath_rw import parse
 
+# Rob: I think it looks like this more or less
+class MultiCondition:
+    def __init__(self, expr_val_dict):
+        self.conditions = []
+        for expr, val in expr_val_dict:
+            self.conditions.append(Condition(expr, val))
+
+    def matches(self, simple_event):
+        match = True
+        for cond in self.conditions:
+            match &= cond.matches(simple_event)
+        return match
+
+
+class MultipleConditionExample:
+    def doit(self):
+        cond = MultiCondition({ 'context': 'data_collection', 'url': '*.jsonl'})
+        sevent = { 'body': { 'context': 'data_collection', 'url': 'happy.jsonl'}}
+        assert cond.matches(sevent) is True
+
 
 class Condition:
     def __init__(self, expr_str, value):
