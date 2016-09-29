@@ -7,6 +7,7 @@ import requests
 
 from dragon_eb import DragonBusClient
 from event_id_filter import EventIdRangeFilter, EventIdFilter
+from filter import Filter
 from mask import Condition, Mask
 from resource_join import ResourceJoin
 from simple_event import ResourceReady
@@ -19,8 +20,9 @@ class DataRetention(DragonBusClient):
     '''receives ResourceReadyEvents and acts upon them'''
 
     def __init__(self):
-        DragonBusClient.__init__(self, EventIdFilter(2000))
+        DragonBusClient.__init__(self, Filter(False))
         logging.basicConfig(format=FORMAT, level=logging.INFO)
+        self.failures = []
         self.start()
 
     def __str__(self):
@@ -45,8 +47,23 @@ class DataRetention(DragonBusClient):
                 failures.append(url)
 
         # This sleep is just for the demo
+        logging.info("retain_data(%s)" % joiner)
+        for event in joiner.mask().events():
+            self.process_event(event) # TODO if one or more resources could not be fetched, we'd have to do something about it
         time.sleep(10)
         joiner.stop()
+
+    def process_event(self, event):
+        url = event['body']['resource_url']
+        #  the following lines simulates the consumption of the resource
+        response = requests.get(url, verify='ca-chain.cert.pem')
+        if response.status_code in range(200, 299):  # TODO IRL we need to handle redirects
+            self.send(ResourceConsumed(url).to_json())
+            print("%s -- %s" % (url, response.text))
+        else:
+            logging.warning("failed to retrieve %s" % url)
+            self.failures.append(url)
+            self.send(ResourceIrretrievable(url).to_json())
 
 
 # ***** You don't need to make this IRL, we already have one here; https://github.com/HISC/DRAGON-Core/tree/master/py/hisc-resource-ready-event
@@ -66,7 +83,9 @@ class DataCollection(DragonBusClient):
         if json_message['header']['event_id'] == 2001:
             if json_message['body']['resource_url'] in self.receipts:
                 self.receipts.remove(json_message['body']['resource_url'])
-
+        if json_message['header']['event_id'] == 2002:
+            logging.info("handling fouled resource %s" % (json_message['body']['resource_url']))
+            self.retransmit(json_message['body']['resource_url'])
 
     def __str__(self):
         return "DataCollection.receipts: %s" % self.receipts
@@ -75,8 +94,9 @@ class DataCollection(DragonBusClient):
         file_names = ['agencies.jsonl', 'caregivers.jsonl', 'care_logs.jsonl', 'clients.jsonl', 'locations.jsonl_',
                       'shifts.jsonl', 'timezone_agencies.jsonl']
         for resource in file_names:
-            url = "https://localhost/%s" % resource
-            self.send(ResourceReady(url).to_json())
+            url = "https://ender.noradltd.com/%s" % resource
+            self.await(url)
+            self.transmit(url)
         wait_count = 0
         while self.receipts and wait_count < 10:
             time.sleep(1)
@@ -86,7 +106,8 @@ class DataCollection(DragonBusClient):
         self.receipts.append(url)
 
     def discard(self, url):
-        self.receipts.remove(url)
+        if url in self.receipts:
+            self.receipts.remove(url)
 
     def transmit(self, url):
         self.send(ResourceReady(url).to_json())
